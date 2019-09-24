@@ -4,3 +4,5 @@
 1.VS2015
 2.Qt Creator 4.6.2
 3.qt库qt-opensource-windows-x86-5.11.1
+
+output中的文件放入编译目录output对应目录下

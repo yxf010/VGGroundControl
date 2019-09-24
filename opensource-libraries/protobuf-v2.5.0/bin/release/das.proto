@@ -1,0 +1,828 @@
+//=================================================================================================
+// project: das - data access service
+// company: viga ltd.
+// date   : 2016.12.17
+//=================================================================================================
+package das.proto;
+
+//=================================================================================================
+//PostHeartBeat
+//=================================================================================================
+message PostHeartBeat {
+    required uint32 seqno        = 1;	//本包的包序号
+    optional string id           = 2;	//身份ID
+} 
+
+//=================================================================================================
+//AckHeartBeat
+//=================================================================================================
+message AckHeartBeat {
+    required uint32 seqno        = 1;	//本包的包序号
+}
+
+//=================================================================================================
+//ParameterDescription
+//=================================================================================================
+message ParameterDescription {
+	required string name            = 1;	//参数名称
+	required bool   readonly        = 2;	//参数只读
+	required uint32 type            = 3;	//参数类型(1-int, 2-float,3-string, 10-ip)
+	required string value           = 4;	//参数值
+}
+
+//=================================================================================================
+//QueryParameters
+//=================================================================================================
+message QueryParameters {
+    required uint32 seqno           = 1;	//本包的包序号
+    required string id              = 2;	//设备ID号
+    repeated string pdnames         = 3;	//参数表，空表示所有
+}
+
+//=================================================================================================
+//AckQueryParameters
+//=================================================================================================
+message AckQueryParameters {
+    required uint32 seqno            = 1;	//本包的包序号
+    required string id               = 2;	//设备ID号
+    required int32  result           = 3;	//查询结果
+    repeated ParameterDescription pd = 4;	//参数表(pd->pds)
+}
+
+//=================================================================================================
+//ConfigureParameters
+//=================================================================================================
+message ConfigureParameters {
+    required uint32 seqno            = 1;	//本包的包序号
+    required string id               = 2;	//设备ID号
+    repeated ParameterDescription pd = 3;	//参数表
+}
+
+//=================================================================================================
+//AckConfigurParameters
+//=================================================================================================
+message AckConfigurParameters {
+    required uint32 seqno       = 1;	//本包的包序号
+    required string id          = 2;	//设备ID号
+    required int32  result      = 3;	//设置结果
+}
+
+//=================================================================================================
+//UpdateDeviceList
+//=================================================================================================
+message UpdateDeviceList {
+    required uint32 seqno           = 1;	//本包的包序号
+    required uint32 operation       = 2;	//删除(0)/添加(1)/禁用
+    repeated string id              = 3;	//设备ID表
+}
+
+//=================================================================================================
+//AckUpdateDeviceList
+//=================================================================================================
+message AckUpdateDeviceList {
+	required uint32 seqno     		= 1;	//本包的包序号
+	required int32  result    		= 2;	//更新结果
+}
+
+//=================================================================================================
+//RequestIdentityAllocation GS
+//=================================================================================================
+message RequestIdentityAllocation {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required string devtype    		= 2;	//设备类型UAV/TRACKER(devtype->type)
+	optional string	extradata 		= 3;	//扩展备用数据
+}
+
+//=================================================================================================
+//AckIdentityAllocation GS
+//=================================================================================================
+message AckIdentityAllocation {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32 	result			= 2;	//ID分配的结果
+	optional string	id		        = 3;	//分配得到的ID
+	optional string	extradata 		= 4;	//扩展备用数据
+}
+
+//=================================================================================================
+//RequestProgramUpload GS固件分包上传
+//=================================================================================================
+message PostProgram {
+    required uint32 seqno    = 1;   //本包的包序号
+    required string name     = 2;   //FW名
+    required int32  offset   = 3;   //固件偏移值
+    optional bytes  data     = 4;   //程序中的数据块
+    optional int32  fwtype   = 5;   //FW类型 0:云航灯, 1:FMU, 2:IMU
+    optional int32  length   = 6;   //FW总长度
+    optional uint32 crc32    = 7;   //整个程序的CRC32校验
+    optional bool release    = 8;   //是否是发布版本
+}
+
+//=================================================================================================
+//AckProgramUpload
+//=================================================================================================
+message AckPostProgram {
+    required uint32 seqno   = 1;	//本包的包序号
+    required int32  result  = 2;    //请求上传结果0/1/-1
+}
+
+//=================================================================================================
+//RequestProgramUpgrade GS更新FW=>Uav
+//=================================================================================================
+message NotifyProgram {
+	required uint32 seqno   = 1;	//本包的包序号
+	required string uavid   = 2;	//uavid
+	required string name    = 3;	//FW名
+	required int32  fwtype  = 4;	//FW类型 0:云航灯, 1:FMU, 2:IMU
+	required int32  length  = 5;	//FW总长度
+	required uint32 crc32   = 6;	//整个程序的CRC32校验
+}
+
+//=================================================================================================
+//AckProgramUpgrade
+//=================================================================================================
+message AckNotifyProgram {
+	required uint32 seqno           = 1;	//本包的包序号
+	required int32  result          = 2;    //请求更新结果0/1/-1(设备不在线/升级/设备出错)
+}
+
+//=================================================================================================
+//RequestProgramData
+//=================================================================================================
+message RequestProgram {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required string name  			= 2;	//软件版本信息:TRACKER-V0.2.0
+	required int32  offset			= 3;	//请求的数据块在程序中的偏移
+	required int32  length			= 4;	//请求的数据块长度
+}
+
+//=================================================================================================
+//AckProgramDownload
+//=================================================================================================
+message AckRequestProgram {
+	required uint32 seqno           = 1;	//本包的包序号
+	required int32  result          = 2;    //请求数据结果
+	required string name            = 3;	//软件版本信息:TRACKER-V0.2
+	required int32  offset          = 4;	//数据块在程序中的偏移
+	optional bytes  data            = 5;	//程序中的数据块
+}
+
+//=================================================================================================
+//RequestPositionAuthentication
+//=================================================================================================
+message RequestPositionAuthentication {
+	required uint32  seqno    		= 1;	//本包的包序号
+	required string  devid    		= 2;	//设备的ID(devid->id)
+	required GpsInformation pos		= 3;	//当前位置
+} 
+
+//=================================================================================================
+//AckPositionAuthentication
+//=================================================================================================
+message AckPositionAuthentication {
+	required uint32	seqno    		= 1;	//本包的包序号
+	required int32 	result			= 2;	//身份认证结果
+	optional string devid           = 3;    //设备的ID,仅一飞的需要设置
+} 
+
+//=================================================================================================
+//Request3rdIdentityAuthentication
+//=================================================================================================
+message Request3rdIdentityAuthentication {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required string identification	= 2;	//第三方ID 	
+	required string secretkey 		= 3;	//第三方密钥 	
+	optional string	extradata 		= 4;	//扩展备用数据
+} 
+
+//=================================================================================================
+//Ack3rdIdentityAuthentication
+//=================================================================================================
+message Ack3rdIdentityAuthentication {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32 	result			= 2;	//身份认证结果
+	optional string	extradata 		= 3;	//扩展备用数据
+}
+
+//=================================================================================================
+//RequestUavIdentityAuthentication
+//=================================================================================================
+message RequestUavIdentityAuthentication {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required string uavid    		= 2;	//无人机的ID
+	optional string	extradata 		= 3;	//扩展备用数据
+} 
+
+//=================================================================================================
+//AckUavIdentityAuthentication
+//=================================================================================================
+message AckUavIdentityAuthentication {
+	required uint32 seqno    		= 1;	//本包的包序号
+	optional string uavid           = 2;	//无人机的ID，一飞的飞机身份认证时要设置
+	required int32 	result			= 3;	//身份认证结果
+	optional uint64	deadline		= 4;	//授权截止日期
+	optional string	extradata 		= 5;	//扩展备用数据
+}
+
+//=================================================================================================
+//RequestNewGS
+//=================================================================================================
+message RequestNewGS {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required string userid    		= 2;	//用户的ID leng>=3
+	optional string phone    		= 3;	//验证手机
+	optional string check 			= 4;	//验证码
+	optional string password 		= 5;	//用户的密码
+} 
+
+//=================================================================================================
+//AckGVIdentityAuthentication
+//=================================================================================================
+message AckNewGS {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32 	result			= 2;	//申请账户成功//-3:验证码错误,-2:名字不合法,-1:服务错误,0：名字存在
+	optional string check 			= 3;	//验证码 没有验证码存在，获取验证码
+}
+
+//=================================================================================================
+//RequestGSIdentityAuthentication
+//=================================================================================================
+message RequestGSIdentityAuthentication {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required string userid    		= 2;	//用户的ID
+	optional string password 		= 3;	//用户的密码 //3/4/5 三选一；忘记密码使用登记phone获取验证码登录
+	optional string phone 			= 4;	//登记phone 
+	optional string check 			= 5;	//验证码 
+} 
+
+//=================================================================================================
+//AckGSIdentityAuthentication
+//=================================================================================================
+message AckGSIdentityAuthentication {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32 	result			= 2;	//身份认证结果
+	optional string	password 		= 3;	//密码,验证码获取密码 
+}
+
+//=================================================================================================
+//GpsInformation
+//=================================================================================================
+message GpsInformation {			   		//GPS信息
+	required int32 	longitude		= 1;	//经度，乘以1e-7才是真正的经度,度
+	required int32 	latitude		= 2;	//纬度，乘以1e-7才是真正的纬度,度
+	required int32 	altitude		= 3;	//高度，乘以1e-3才是真正的高度,米
+	repeated float	velocity 		= 4;	//速度，北东地三个方向上的速度,米/秒
+}
+
+//=================================================================================================
+// UavAttitude
+//=================================================================================================
+message UavAttitude {                       //飞机姿态信息
+    required float  roll            = 1;    //翻滚，弧度
+    required float  pitch           = 2;    //俯仰，弧度
+    required float  yaw             = 3;    //偏航，弧度
+    required float  relative_alt    = 4;    //相对高度，米
+    required float  groundspeed     = 5;    //相对地速，米/秒
+}
+
+//=================================================================================================
+//OperationStatus
+//=================================================================================================
+message OperationStatus {					//作业关键状态
+    optional string	operationmode = 1;	//作业模式
+    optional float	voltage       = 2;	//当前电压，伏特
+    optional float	surplusenergy = 3;	//剩余电量，百分比
+    optional float	jetvelocity   = 4;	//当前喷速，毫升/秒
+    optional float	sprayeddose   = 5;	//已喷药量，毫升
+}
+
+//=================================================================================================
+//OperationParams
+//=================================================================================================
+message OperationParams {					//作业关键参数
+	optional float	alarmvoltage	= 1;	//报警电压，伏特
+	optional float	alarmdose	= 2;	//报警药量，毫升
+	optional float	sprayingwidth	= 3;	//预设作业喷幅，米
+	optional float	desiredaltitude	= 4;	//预设作业高度，米
+	optional float	desiredvelocity	= 5;	//预设作业速度，米/秒
+	optional float	jetvelocity		= 6;	//预设作业喷速，毫升/秒
+}
+
+//=================================================================================================
+//OperationInformation
+//=================================================================================================
+message OperationInformation {				//实时作业信息
+	required string uavid    		= 1;	//无人机的唯一标识
+	required uint64	timestamp		= 2;	//作业信息的时间戳
+	required GpsInformation  gps	= 3;	//GPS相关信息
+	optional OperationStatus status	= 4;	//作业关键状态
+	optional OperationParams params	= 5;	//作业关键参数
+	optional UavAttitude   attitude = 6;    //无人机姿态信息
+}
+
+//=================================================================================================
+//PostOperationInformation
+//=================================================================================================
+message PostOperationInformation {
+	required uint32 seqno    		= 1;	//本包的包序号
+	repeated OperationInformation oi= 2;	//实时作业信息
+}
+
+//=================================================================================================
+//AckOperationInformation
+//=================================================================================================
+message AckOperationInformation {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32	result			= 2;	//上报结果
+}
+
+//=================================================================================================
+//Coordinate
+//=================================================================================================
+message Coordinate {						//位置坐标
+	required int32 	longitude		= 1;	//经度，乘以1e-7才是真正的经度,度
+	required int32 	latitude		= 2;	//纬度，乘以1e-7才是真正的纬度,度
+	optional int32 	altitude		= 3;	//高度，乘以1e-3才是真正的高度,米
+}
+
+//=================================================================================================
+//OperationSnapshot
+//=================================================================================================
+message OperationSnapshot {					//实时作业抓拍
+	required string     devid    	= 1;	//设备的唯一标识
+	required uint64	    timestamp	= 2;	//作业信息的时间戳
+	optional Coordinate pos			= 3;	//位置信息,如果有位置信息,则分包时第一包设置,不分包设置
+	optional int32      size        = 4;	//图片总长,分包时第一包设置,后续包不设置,不分包时不设置
+	required bytes      pic			= 5;	//图片数据片段
+}
+
+//=================================================================================================
+//PostOperationSnapshot
+//=================================================================================================
+message PostOperationSnapshot {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required OperationSnapshot os   = 2;	//实时作业抓拍
+}
+
+//=================================================================================================
+//AckPostOperationSnapshot
+//=================================================================================================
+message AckPostOperationSnapshot {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32	result			= 2;	//上报结果
+}
+
+//=================================================================================================
+//Outline
+//=================================================================================================
+message Outline{							//地块轮廓信息
+	repeated Coordinate coordinates	= 1; 	//轮廓点坐标集，至少3个
+}
+
+//=================================================================================================
+//SurveryPrecision
+//=================================================================================================
+enum SurveryPrecision {
+	LOW		= 1;	//低
+	MEDIUM	= 2;	//中
+	HIGH	= 3;	//高
+}
+
+//=================================================================================================
+//ParcelSurveyInformation
+//=================================================================================================
+message ParcelSurveyInformation {			//地块测绘信息
+	required string surveryorid  	= 1;	//测绘人员的ID
+	required uint64	surverytime		= 2;	//测绘时间
+	required SurveryPrecision sp	= 3;	//测绘精度
+	required Outline		  po	= 4;	//地块轮廓信息
+	repeated Outline		  bo	= 5;	//障碍物轮廓信息
+	optional string           id    = 6; 	//地块测绘信息ID
+}
+
+//=================================================================================================
+//PostParcelSurveyInformation
+//=================================================================================================
+message PostParcelSurveyInformation {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required ParcelSurveyInformation psi=2;	//地块测绘信息
+}
+
+//=================================================================================================
+//AckPostParcelSurveyInformation
+//=================================================================================================
+message AckPostParcelSurveyInformation {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32  result			= 2;	//上报结果
+	optional string	psiid			= 3;	//地块测绘信息ID
+}
+
+//=================================================================================================
+//RequestParcelSurveyInformations
+//=================================================================================================
+message RequestParcelSurveyInformations {
+	required uint32 seqno    		= 1;	//本包的包序号
+	optional string	psiid			= 2;	//地块测绘信息ID
+	optional Coordinate coordinate  = 3;	//地块内部一点的经纬度
+}
+
+//=================================================================================================
+//AckRequestParcelSurveyInformations
+//=================================================================================================
+message AckRequestParcelSurveyInformations {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32  result			= 2;	//请求结果
+	repeated ParcelSurveyInformation psis=3;//地块测绘信息
+}
+
+//=================================================================================================
+//ParcelContracter
+//=================================================================================================
+message ParcelContracter {					//地块承包者信息
+	required string name  			= 1;	//姓名
+	required uint64 birthdate       = 2;  	//出生日期(unit:ms)
+	required string	address			= 3;	//地址
+	required string	mobileno 		= 4;	//手机
+	optional string	phoneno 		= 5;	//电话
+	optional string	weixin 		    = 6;	//微信
+	optional string id              = 7; 	//地块承包者信息ID
+}
+
+//=================================================================================================
+//ParcelDescription
+//=================================================================================================
+message ParcelDescription {					//地块描述信息
+	required string name            = 1;    //地块名称
+	required string registerid  	= 2;	//登记人员的ID
+	required ParcelContracter pc    = 3; 	//地块承包者信息
+	required float	acreage			= 4;	//地块面积，亩
+	optional string	psiid			= 5;	//地块测绘信息ID
+	optional ParcelSurveyInformation psi=6;	//地块测绘信息
+	optional Coordinate coordinate	= 7;	//地块中某点的坐标
+	optional string id              = 8; 	//地块描述信息ID
+}
+
+//=================================================================================================
+//PostParcelDescription
+//=================================================================================================
+message PostParcelDescription {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required ParcelDescription pd	= 2;	//地块描述信息
+}
+
+//=================================================================================================
+//AckPostParcelDescription
+//=================================================================================================
+message AckPostParcelDescription {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32	result			= 2;	//上报结果
+	optional string	pcid			= 3;	//地块承包者信息ID
+	optional string	psiid			= 4;	//地块测绘信息ID
+	optional string	pdid			= 5;	//地块描述信息ID
+}
+
+//=================================================================================================
+//RequestParcelDescriptions
+//=================================================================================================
+message RequestParcelDescriptions {
+	required uint32 seqno    		= 1;	//本包的包序号
+	optional string	pdid			= 2;	//地块描述信息ID
+	optional Coordinate coordinate  = 3;	//地块内部一点的经纬度
+	optional string surveryorname  	= 4;	//测绘人员的姓名
+	optional string surveryorid  	= 5;	//测绘人员的ID
+	optional string registername  	= 6;	//登记人员的姓名
+	optional string registerid  	= 7;	//登记人员的ID
+	optional string parcelname      = 8;    //地块名称
+	optional string contracter      = 9;	//承包者姓名
+	optional string	mobileno 		=10;	//承包者手机
+	repeated Coordinate zones       =11;	//查询区域内的地块信息
+}
+
+//=================================================================================================
+//AckRequestParcelDescriptions
+//=================================================================================================
+message AckRequestParcelDescriptions {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32  result			= 2;	//请求结果
+	repeated ParcelDescription pds  = 3;    //地块描述信息
+}
+
+//=================================================================================================
+//DeleteParcelDescription
+//=================================================================================================
+message DeleteParcelDescription {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required string	pdid			= 2;	//地块描述信息ID
+	optional bool   delpsi          = 3;    //是否删除地块测绘信息
+	optional bool   delpc           = 4;    //是否删除地块承包者信息
+}
+
+//=================================================================================================
+//AckDeleteParcelDescription
+//=================================================================================================
+message AckDeleteParcelDescription {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32	result			= 2;	//执行结果
+}
+
+//=================================================================================================
+//SingleShrink
+//=================================================================================================
+message SingleShrink {
+	required int32  bdr    	    = 1;	//本包的包序号
+	required double	safe        = 2;	//执行结果
+}
+
+//=================================================================================================
+//OperationPlan 
+//=================================================================================================
+message OperationPlan {//作业规划参数
+    required double width           = 1;	//喷幅
+    required float  angle           = 2;	//作业角度
+    required bool   anti            = 3;	//是否从右至左作业
+    required bool single            = 4;	//单边缩放
+    repeated SingleShrink bdrsafe   = 5;	//边界安全距离
+    required double block           = 6;	//障碍物安全距离
+}
+
+//=================================================================================================
+//OperationDescription
+//=================================================================================================
+message OperationDescription {//规划描述信息
+    required string registerid      = 1;	//登记人员的ID
+    required string pdid            = 2;	//地块信息ID
+    required OperationPlan op       = 3;    //规划参数
+    required string crop            = 4;	//作物
+    required string drug            = 5;	//农物
+    required float prize            = 6;	//单价
+    optional uint64 plantime        = 7;	//规划时间
+    optional string notes           = 8;    //备注
+    optional string odid            = 9;	//作业描述信息ID
+}
+
+//=================================================================================================
+//PostOperationDescription
+//=================================================================================================
+message PostOperationDescription {//上传规划
+    required uint32 seqno            = 1;	//本包的包序号
+    required OperationDescription od = 2;	//作业描述信息
+}
+
+//=================================================================================================
+//AckPostOperationDescription
+//=================================================================================================
+message AckPostOperationDescription {//上传规划结果
+    required uint32 seqno           = 1;	//本包的包序号
+    required int32  result          = 2;	//上报结果
+    optional string odid            = 3;    //作业描述信息ID    
+}
+
+//=================================================================================================
+//RequestOperationDescriptions
+//=================================================================================================
+message RequestOperationDescriptions {//规划下载
+    required uint32 seqno           = 1;	//本包的包序号
+    optional string odid            = 2;	//作业描述信息ID
+    optional string pdid            = 3;	//地块描述信息ID
+    optional string registerid      = 4;    //登记人的ID
+}
+
+//=================================================================================================
+//AckRequestOperationDescriptions
+//=================================================================================================
+message AckRequestOperationDescriptions {//规划下载结果
+    required uint32 seqno             = 1;		//本包的包序号
+    required int32  result            = 2;		//查询结果
+    repeated OperationDescription ods = 3;		//作业描述
+}
+
+//=================================================================================================
+//DeleteOperationDescription
+//=================================================================================================
+message DeleteOperationDescription {//规划删除
+	required uint32 seqno   = 1;	//本包的包序号
+	required string odid    = 2;	//作业描述信息ID
+}
+
+//=================================================================================================
+//AckDeleteOperationDescription
+//=================================================================================================
+message AckDeleteOperationDescription {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32	result			= 2;	//执行结果
+}
+
+//=================================================================================================
+//BillInformation
+//=================================================================================================
+message BillInformation {					//结算信息
+	optional float servicecharge	= 1;	//服务费用，元
+	optional float pesticidecharge	= 2;	//农药费用，元
+	optional float othercharge		= 3;	//其它费用，元
+	required float sumcharge		= 4;	//总费用，元
+	required string	pesticide       = 5;	//农药
+	required string	crop 			= 6;	//作物
+}
+
+//=================================================================================================
+//OperationRoute
+//=================================================================================================
+message OperationRoute {                    //作业航线，不需要保存数据库
+	required string gsid  	             = 1;    //创建人员的ID
+    required string uavid                = 2;    //无人机ID
+    required string rpid                 = 3;    //规划ID
+	required uint64	createtime           = 4;    //航线的最后修改时间
+    required float  maxvoyage            = 5;    //航程,单位米
+    repeated bytes  missions             = 6;    //航点列表[mavlink协议中的payload]
+    repeated bytes  boundarys            = 7;    //飞行地界[mavlink协议中的payload]
+	optional BillInformation bi          = 8;	 //描述信息
+}
+
+//=================================================================================================
+//PostOperationRoute
+//=================================================================================================
+message PostOperationRoute {
+	required uint32         seqno  	= 1;    //本包的包序号
+	required OperationRoute or      = 2;    //作业航线
+}
+
+//=================================================================================================
+//AckPostOperationRoute
+//=================================================================================================
+message AckPostOperationRoute {
+	required uint32 seqno    		= 1;	//本包的包序号
+	required int32	result			= 2;	//上报结果
+}
+
+//=================================================================================================
+//UploadOperationRoutes
+//=================================================================================================
+message UploadOperationRoutes {//UAV消息
+    required uint32    seqno     = 1;    //本包的包序号
+    required string    uavid     = 2;    //无人机ID
+    required string    userid    = 3;    //操作员ID
+    required uint64    timestamp = 4;    //航线的最后修改时间
+    required int32  countmission = 5;    //航点总数
+    required int32 countboundary = 6;    //航点总数
+}
+
+//=================================================================================================
+//SyscOperationRoutes
+//=================================================================================================
+message SyscOperationRoutes {//GS消息，通知GS上传进度
+    required uint32  seqno   = 1;	//本包的包序号
+    required int32   result  = 2;	//执行结果[-4没有权限,-3处理异常,-2飞机不在线,]
+    required string  uavid   = 3;	//无人机ID[续: -1航线异常,0处理中,1已完成]
+    optional int32   index   = 5;	//已传航点数
+    optional int32   count   = 6;	//航点总数
+}
+
+//=================================================================================================
+//RequestRouteMissions
+//=================================================================================================
+message RequestRouteMissions {
+    required uint32  seqno     = 1;    //本包的包序号
+    required string  uavid     = 2;    //无人机ID
+    required bool    boundary  = 3;    //是否是边界
+    required int32   offset    = 4;    //第一个航点序号<0完成
+    required int32   count     = 5;    //航点数
+    required uint64  timestamp = 6;    //航线的最后修改时间
+}
+
+//=================================================================================================
+//AckRequestRouteMissions
+//=================================================================================================
+message AckRequestRouteMissions {
+    required uint32 seqno    = 1;	//本包的包序号
+    required int32  result   = 2;	//执行结果[-1失败,1成功]
+    required bool   boundary = 3;	//是否是边界
+    required int32  offset   = 4;	//第一个mission序号 <0完成
+    repeated bytes  missions = 5;	//航点列表[mavlink协议中的payload]
+}
+
+//=================================================================================================
+//UavStatus
+//=================================================================================================
+message UavStatus {
+    required string uavid           = 1;    //设备ID
+    required int32  result          = 2;    //查询结果[-2飞机ID无效,-1飞机ID被禁用,1-成功]
+    optional bool   online          = 3;    //无人机是否在线
+    optional bool   landed          = 4;    //无人机是否着陆
+    optional uint64 deadline        = 5;    //授权截止日期
+    optional bool   binded          = 6;    //无人机是否绑定
+    optional string binder          = 7;    //绑定者
+    optional uint64 bindtime        = 8;    //绑定时间
+    optional uint64 unbindtime      = 9;    //解绑时间
+    optional GpsInformation pos     =10;    //无人机最后位置
+    optional uint64 timestamp       =11;    //最后位置对应的时间
+}
+
+//=================================================================================================
+//RequestUavStatus
+//=================================================================================================
+message RequestUavStatus {
+    required uint32 seqno = 1;	//本包的包序号
+    repeated string uavid = 2;	//无人机id
+}
+
+//=================================================================================================
+//AckRequestUavStatus
+//=================================================================================================
+message AckRequestUavStatus {
+    required uint32    seqno  = 1;	//本包的包序号
+    repeated UavStatus status = 2;	//无人机状态
+}
+
+//=================================================================================================
+//RequestBindUav
+//=================================================================================================
+message RequestBindUav {
+    required uint32 seqno  = 1;	//本包的包序号
+    required uint32 opid   = 2;	//操作:1-绑定/0-解绑
+    required string uavid  = 3;	//无人机id
+    required string binder = 4;	//绑定者
+}
+
+//=================================================================================================
+//AckRequestBindUav
+//=================================================================================================
+message AckRequestBindUav {
+    required uint32    seqno   = 1;	//本包的包序号
+    required uint32    opid    = 2;	//操作:1-绑定/0-解绑
+    required int32     result  = 3;	//绑定结果[-3已经被绑定/无权解绑,-2飞机ID无效,-1飞机ID被禁用,0绑定/解绑失败,1-成功]
+    optional UavStatus status  = 4;	//无人机状态[result为-3,0和1时设置]
+}
+
+//=================================================================================================
+//UavProductInfo
+//=================================================================================================
+message UavProductInfo {
+    optional string    uavid        = 1;    //飞控ID号
+    optional string    producttype  = 2;    //产品型号
+    optional string    productid    = 3;    //产品ID号
+    optional string    organization = 4;    //所属组织
+    optional string    manager      = 5;    //负责人
+    optional string    contact      = 6;    //联系方式
+}
+
+//=================================================================================================
+//RequestUavProductInfos
+//=================================================================================================
+message RequestUavProductInfos {
+    required uint32    seqno     = 1;	//本包的包序号
+    repeated string    productid = 2;	//产品ID号
+    repeated string    uavid     = 3;	//飞控ID号
+}
+
+//=================================================================================================
+//AckRequestUavProductInfos
+//=================================================================================================
+message AckRequestUavProductInfos {
+    required uint32         seqno   = 1;	//本包的包序号
+    required int32          result  = 2;	//执行结果[-1失败,1成功]
+    repeated UavProductInfo upi     = 3;	//无人机产品信息
+}
+
+//=================================================================================================
+//PostUavProductInfos
+//=================================================================================================
+message PostUavProductInfos {
+    required uint32         seqno   = 1;	//本包的包序号
+    repeated UavProductInfo upi     = 2;    //无人机产品信息
+}
+
+//=================================================================================================
+//AckPostUavProductInfos
+//=================================================================================================
+message AckPostUavProductInfos {
+    required uint32 seqno  = 1;	//本包的包序号
+    required int32  result = 2;	//执行结果
+}
+
+//=================================================================================================
+//PostControl2Uav
+//=================================================================================================
+message PostControl2Uav {
+    required uint32 seqno           = 1;    //本包的包序号
+    required string uavid           = 2;    //无人机id
+    required string userid          = 3;    //发起者id
+    repeated bytes  data            = 4;    //mavlink协议数据
+}
+
+//=================================================================================================
+//AckPostControl2Uav
+//=================================================================================================
+message AckPostControl2Uav {
+    required uint32 seqno           = 1;    //本包的包序号
+    required int32  result          = 2;    //执行结果[-3无权控制,-2飞机ID无效,-1飞机ID被禁用,1成功]
+    required string uavid           = 3;    //无人机id
+    required string userid          = 4;    //发起者id
+}
+
+//=================================================================================================
+//PostStatus2GroundStation
+//=================================================================================================
+message PostStatus2GroundStation {
+    required uint32 seqno           = 1;    //本包的包序号
+    required string uavid           = 2;    //无人机id
+    repeated bytes  data            = 3;    //mavlink协议数据
+}

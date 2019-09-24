@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recource>
+    <ParameterLimit type="int" id="MPC_ALT_MODE" name="仿地" list="0:等高;1:仿地" group="仿地"/>
+    <ParameterLimit type="float" strict="true" id="MPC_Z_P" name="仿地灵敏度" list="1.2:高;1.0:中;0.8:低" group="仿地" />
+
+    <ParameterLimit type="float" id="SPRAY_SWAT" name="喷幅" group="喷洒参数"/>
+    <ParameterLimit type="float" id="SPRAY_QUAN" name="亩用量" group="喷洒参数"/>
+    <ParameterLimit type="float" id="MPC_XY_CRUISE" name="作业速度" group="喷洒参数"/>
+    <ParameterLimit type="int" id="NAV_MIS_SWITCH" name="校磁" group="校磁"/>
+    <ParameterLimit type="float" id="MPC_WORK_MIN_ALT" name="飞行最低高度" group="高度"/>
+    <ParameterLimit type="float" id="RTL_DESCEND_ALT" name="下降高度" group="高度"/>
+    <ParameterLimit type="float" id="MIS_TAKEOFF_ALT" name="校磁高度" group="高度"/>
+    <ParameterLimit type="float" id="EKF2_ALT1_SAFETY" name="越界保护高度" group="高度"/>
+
+    <!-- readonly -->
+    <ParameterLimit type="uint" id="SYS_UAV_ID" name="飞机ID" show="base16" group="undef" readonly="true" />
+    <ParameterLimit type="int" id="BAT_N_CELLS" name="电池芯数" group="undef" least="1" readonly="true" />
+	
+    <ParameterLimit type="uint" id="HOST_IP" name="云IP" show="ip" group="undef" least="1.0.0.1" biggest="255.0.0.0" />
+    <ParameterLimit type="uint" id="HOST_PORT" name="云Port" group="undef" least="1" biggest="65535" />
+
+    <ParameterLimit type="float" id="BAT_V_LOW_THR" name="低电压阈值" group="undef" least="3.5" biggest="3.7" />
+    <ParameterLimit type="float" id="BAT_V_CRIT_THR" name="严重低电压阈值" group="undef" least="3.5" biggest="3.7" />
+    <ParameterLimit type="float" id="BAT_V_EMER_THR" name="紧急低电压阈值" group="undef" least="3.42" biggest="3.7" />
+
+    <ParameterLimit type="float" id="GF_MAX_HOR_DIST" name="限距" group="undef" least="0" biggest="5000" />
+    <ParameterLimit type="float" id="GF_MAX_VER_DIST" name="限高" group="undef" least="0" biggest="30" />
+    <ParameterLimit type="float" id="MPC_XY_VEL_MAX" name="限速" group="undef" least="1" biggest="7" />
+
+    <ParameterLimit type="int" id="SPRAY_NOWATER" name="无药处理方式" list="0:不处理;1:警告;2:悬停;3:返航"  />
+    <ParameterLimit type="int" strict="true" id="COM_LOW_BAT_ACT" name="电量低处理方式" list="0:警告;2:原地降落;3:返航" />
+    <ParameterLimit type="int" id="NAV_RCL_ACT" name="遥控器失效处理方式" list="0:不处理;1:悬停;2:返航;3:着陆" />
+
+    <ParameterLimit type="float" id="FLMT_CALI" name="流量计修正系数" group="undef" least="0" biggest="10" />
+    <UavEvents>
+        <UavEvent  event="1" tip="解锁成功！" leave="Event_Info"/>
+        <UavEvent  event="2" tip="着陆自动加锁成功！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="3" tip="导航未就绪，RTK高度未收敛" leave="Event_SpeakInfo"/>
+        <UavEvent  event="4" tip="切换至返航模式" leave="Event_SpeakInfo"/>
+        <UavEvent  event="5" tip="计算回程路径成功！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="6" tip="计算回程路径失败！" leave="Event_Fatal"/>
+        <UavEvent  event="7" tip="无可用航线，请重新上传！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="8" tip="RTK高度已收敛！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="9" tip="高度异常保护！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="10" tip="没有障碍物！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="11" tip="飞机高度越界一级保护，请注意接管！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="12" tip="飞机高度越界二级保护，请注意接管！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="13" tip="飞机航向异常，请软件复位！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="14" tip="飞机磁异常，请校磁！" leave="Event_Fatal"/>
+        <UavEvent  event="15" tip="飞机导航水平位置异常，请及时接管降落！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="16" tip="飞机导航水平速度异常，请及时接管降落！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="17" tip="GPS未工作，请检查！" leave="Event_Fatal"/>
+        <UavEvent  event="18" tip="RTK数据中断，请接管尽快降落！" leave="Event_Fatal"/>
+        <UavEvent  event="19" tip="雷达未工作，请检查！" leave="Event_Fatal"/>
+        <UavEvent  event="20" tip="加表一致性错误！" leave="Event_Fatal"/>
+        <UavEvent  event="21" tip="陀螺一致性错误！" leave="Event_Fatal"/>
+        <UavEvent  event="22" tip="磁罗盘一致性错误！" leave="Event_Fatal"/>
+        <UavEvent  event="23" tip="EKF内部检查错误！" leave="Event_Fatal"/>
+        <UavEvent  event="24" tip="EKF高度错误！" leave="Event_Fatal"/>
+        <UavEvent  event="25" tip="EKF速度错误！" leave="Event_Fatal"/>
+        <UavEvent  event="26" tip="EKF水平位置错误！" leave="Event_Fatal"/>
+        <UavEvent  event="27" tip="EKF航向错误！" leave="Event_Fatal"/>
+        <UavEvent  event="28" tip="EKF加表偏差过大！" leave="Event_Fatal"/>
+        <UavEvent  event="29" tip="EKF陀螺偏差过大！" leave="Event_Fatal"/>
+        <UavEvent  event="30" tip="GPS信号质量差！" leave="Event_Fatal"/>
+        <UavEvent  event="31" tip="EKF未使用GPS！" leave="Event_Fatal"/>
+        <UavEvent  event="32" tip="供电异常！" leave="Event_Fatal"/>
+        <UavEvent  event="33" tip="任务设置错误，禁止解锁！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="34" tip="GPOS无效，禁止解锁！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="40" tip="药液耗尽，请尽快返航！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="41" tip="药液耗尽，悬停！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="42" tip="药液耗尽，返航！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="43" tip="GPS信号丢失，原地降落！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="44" tip="GPS信号丢失悬停，30秒后降落，请尽快接管！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="45" tip="飞行越界，悬停！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="46" tip="飞行越界，返航！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="47" tip="飞行越界，紧急终止飞行！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="48" tip="电池电压低，切换至着陆模式！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="49" tip="电池电压低，切换至返航模式！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="50" tip="电池电压低，请尽快返航！" leave="Event_Fatal"/>
+        <UavEvent  event="51" tip="电池电压严重过低，请尽快返航！" leave="Event_Fatal"/>
+        <UavEvent  event="52" tip="危险，电池电压极低，请尽快降落！" leave="Event_Fatal"/>
+        <UavEvent  event="60" tip="雷达数据中断，请关闭仿地，必要时请接管！" leave="Event_Fatal"/>
+        <UavEvent  event="61" tip="雷达数据恢复，仿地可用！" leave="Event_SpeakInfo"/>
+        <UavEvent  event="63" tip="飞机高度过低，自动切换仿地模式！" leave="Event_SpeakInfo"/>
+    </UavEvents>
+</recource>
